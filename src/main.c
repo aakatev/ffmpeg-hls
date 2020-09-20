@@ -8,26 +8,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include "util.h"
-
-typedef struct StreamingParams {
-  char *muxer_opt_key;
-  char *muxer_opt_value;
-  char *video_codec;
-  char *audio_codec;
-} StreamingParams;
-
-typedef struct StreamingContext {
-  AVFormatContext *avfc;
-  AVCodec *video_avc;
-  AVCodec *audio_avc;
-  AVStream *video_avs;
-  AVStream *audio_avs;
-  AVCodecContext *video_avcc;
-  AVCodecContext *audio_avcc;
-  int video_index;
-  int audio_index;
-  char *filename;
-} StreamingContext;
+#include "stream.h"
 
 int fill_stream_info(AVStream *avs, AVCodec **avc, AVCodecContext **avcc) {
   *avc = avcodec_find_decoder(avs->codecpar->codec_id);
@@ -357,11 +338,11 @@ int main(int argc, char *argv[]) {
   AVDictionary* muxer_opts = NULL;
   av_dict_set(&muxer_opts, "hls_playlist_type", "vod", 0);
   av_dict_set(&muxer_opts, "hls_segment_filename", "build/output%05d", 0);
-  //av_dict_set(&muxer_opts, "var_stream_map", "a:0,v:0 a:1,v:1", 0);
+  // av_dict_set(&muxer_opts, "var_stream_map", "a:0,v:0 a:1,v:1", 0);
 
-  if (sp.muxer_opt_key && sp.muxer_opt_value) {
-    av_dict_set(&muxer_opts, sp.muxer_opt_key, sp.muxer_opt_value, 0);
-  }
+  // if (sp.muxer_opt_key && sp.muxer_opt_value) {
+  //   av_dict_set(&muxer_opts, sp.muxer_opt_key, sp.muxer_opt_value, 0);
+  // }
 
   if (avformat_write_header(encoder->avfc, &muxer_opts) < 0) {
     logging("an error occurred when opening output file"); 
